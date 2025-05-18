@@ -1,3 +1,5 @@
+{-# LANGUAGE RankNTypes #-}
+
 module Church
   ( true
   , false
@@ -17,33 +19,33 @@ module Church
 import GHC.Natural
 
 -- Church bools
-type ChurchBool a b c = a -> b -> c
+type ChurchBool = forall a. a -> a -> a
 
-true :: ChurchBool a b a
+true :: ChurchBool
 true a _ = a
 
-false :: ChurchBool a b b
+false :: ChurchBool
 false _ a = a
 
 -- Church Nat
-type Nat x = (x -> x) -> x -> x
+type Nat = forall x. (x -> x) -> x -> x
 
-zero :: Nat x
+zero :: Nat
 zero _ x = x
 
-next :: Nat x -> Nat x
+next :: Nat -> Nat
 next n f x = f (n f x)
 
-add :: Nat x -> Nat x -> Nat x
+add :: Nat -> Nat -> Nat
 add n m f x = m f (n f x)
 
-isZero :: Nat x -> ChurchBool x x x
+isZero :: Nat -> ChurchBool
 isZero n it_is_zero it_is_not_zero = n (const it_is_not_zero) it_is_zero
 
-toHaskell :: Nat Natural -> Natural
+toHaskell :: Nat -> Natural
 toHaskell c = c (+ 1) (0 :: Natural)
 
-fromHaskell :: Natural -> Nat Natural
+fromHaskell :: Natural -> Nat
 fromHaskell 0 = zero
 fromHaskell x
   | x > 0 = o
@@ -57,13 +59,13 @@ fromHaskell x
 fromHaskell _ = error "negtive"
 
 -- Pair
-type Pair a b c = (a -> b -> c) -> c
+type Pair a b = forall c. (a -> b -> c) -> c
 
-pair :: a -> b -> Pair a b x
+pair :: forall a b. (a -> b -> Pair a b)
 pair a b f = f a b
 
-fst :: Pair a b a -> a
-fst p = p true
+fst :: forall a b. (Pair a b -> a)
+fst p = p const
 
-snd :: Pair a b b -> b
-snd p = p false
+snd :: forall a b. (Pair a b -> b)
+snd p = p (\_ b -> b)

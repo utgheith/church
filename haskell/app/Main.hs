@@ -17,7 +17,7 @@ main = do
   print (C.toHaskell $ C.add two three)
   print $ C.toHaskell $ C.add (C.fromHaskell 11) (C.fromHaskell 23)
   let p = C.pair (C.fromHaskell 11) (C.fromHaskell 23)
-  print . C.toHaskell $ C.fst p
-  print . C.toHaskell $ C.snd p
+  print $ C.toHaskell $ C.fst p
+  print $ C.toHaskell $ C.snd p
   print $ C.isZero C.zero "yes" "no"
   print $ C.isZero three "yes" "no"
