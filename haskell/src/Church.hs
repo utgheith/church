@@ -17,12 +17,12 @@ module Church
 import GHC.Natural
 
 -- Church bools
-type ChurchBool a = a -> a -> a
+type ChurchBool a b c = a -> b -> c
 
-true :: ChurchBool a
+true :: ChurchBool a b a
 true a _ = a
 
-false :: ChurchBool a
+false :: ChurchBool a b b
 false _ a = a
 
 -- Church Nat
@@ -37,7 +37,7 @@ next n f x = f (n f x)
 add :: Nat x -> Nat x -> Nat x
 add n m f x = m f (n f x)
 
-isZero :: Nat x -> ChurchBool x
+isZero :: Nat x -> ChurchBool x x x
 isZero n it_is_zero it_is_not_zero = n (const it_is_not_zero) it_is_zero
 
 toHaskell :: Nat Natural -> Natural
@@ -57,13 +57,13 @@ fromHaskell x
 fromHaskell _ = error "negtive"
 
 -- Pair
-type Pair a = (a -> a -> a) -> a
+type Pair a b c = (a -> b -> c) -> c
 
-pair :: a -> a -> Pair a
+pair :: a -> b -> Pair a b x
 pair a b f = f a b
 
-fst :: Pair a -> a
+fst :: Pair a b a -> a
 fst p = p true
 
-snd :: Pair a -> a
+snd :: Pair a b b -> b
 snd p = p false
