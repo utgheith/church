@@ -1,7 +1,12 @@
+.PHONY: all run test build lint format clean
+
 all : Makefile run
 
-run: Makefile build
+run: Makefile
 	stack run
+
+test: Makefile
+	stack test
 
 build: Makefile
 	stack build --pedantic

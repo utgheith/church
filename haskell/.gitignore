@@ -1,2 +1,5 @@
+*.o
+*.hi
+/dist-newstyle
 .stack-work/
 *~

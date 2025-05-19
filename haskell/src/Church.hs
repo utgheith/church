@@ -1,7 +1,14 @@
-{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE GHC2021 #-}
 
 module Church
-  ( true
+  ( Church.and
+  , Church.or
+  , Church.xor
+  , Church.not
+  , ifThenElse
+  , fromHaskellBool
+  , toHaskellBool
+  , true
   , false
   , ChurchBool
   , zero
@@ -26,6 +33,28 @@ true a _ = a
 
 false :: ChurchBool
 false _ a = a
+
+not :: ChurchBool -> ChurchBool
+not b x y = b y x
+
+and :: ChurchBool -> ChurchBool -> ChurchBool
+and a b x y = a (b x y) y
+
+or :: ChurchBool -> ChurchBool -> ChurchBool
+or a b x y = a x (b x y)
+
+xor :: ChurchBool -> ChurchBool -> ChurchBool
+xor a b x y = a (b y x) (b x y)
+
+ifThenElse :: ChurchBool -> a -> a -> a
+ifThenElse b = b
+
+toHaskellBool :: ChurchBool -> Bool
+toHaskellBool b = b True False
+
+fromHaskellBool :: Bool -> ChurchBool
+fromHaskellBool True = true
+fromHaskellBool False = false
 
 -- Church Nat
 type Nat = forall x. (x -> x) -> x -> x
@@ -61,11 +90,11 @@ fromHaskell _ = error "negtive"
 -- Pair
 type Pair a b = forall c. (a -> b -> c) -> c
 
-pair :: forall a b. (a -> b -> Pair a b)
+pair :: a -> b -> Pair a b
 pair a b f = f a b
 
-fst :: forall a b. (Pair a b -> a)
+fst :: Pair a b -> a
 fst p = p const
 
-snd :: forall a b. (Pair a b -> b)
+snd :: Pair a b -> b
 snd p = p (\_ b -> b)
