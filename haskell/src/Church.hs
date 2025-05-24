@@ -1,4 +1,5 @@
-{-# LANGUAGE GHC2021 #-}
+{-# LANGUAGE GHC2024 #-}
+{-# LANGUAGE RankNTypes #-}
 
 module Church
   ( Church.and
@@ -57,7 +58,7 @@ fromHaskellBool True = true
 fromHaskellBool False = false
 
 -- Church Nat
-type Nat = forall x. (x -> x) -> x -> x
+type Nat = forall x . (x -> x) -> x -> x
 
 zero :: Nat
 zero _ x = x
@@ -76,16 +77,14 @@ toHaskell c = c (+ 1) (0 :: Natural)
 
 fromHaskell :: Natural -> Nat
 fromHaskell 0 = zero
-fromHaskell x
-  | x > 0 = o
+fromHaskell x = o
   where
     h = fromHaskell $ div x 2
     d = add h h
     o =
       if mod x 2 == 1
-        then next d
-        else d
-fromHaskell _ = error "negtive"
+        then next (add h h)
+        else add h h
 
 -- Pair
 type Pair a b = forall c. (a -> b -> c) -> c
